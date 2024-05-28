@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isBanned Boolean @default(false)
+  banExpiresAt String? @default("")
+
+  email String @unique
+  hash String
+
+  fullName String
+  phone String
+
+  city City @relation(fields: [cityName], references: [name])
+  cityName String @default("")
+
+  lat String @default("")
+  lon String @default("")
+
+  age Int @default(18)
+
+  pointOfDate String[]
+
+  familyStatus String?
+
+  info String?
+
+  avatar String?
+  gallery String[]
+
+  lastConnects String[]
+
+  children String @default("")
+  sex Boolean
+
+  balance Int @default(0)
+
+  vip Boolean? @default(false)
+  vipExpiresAt String? @default("")
+
+  height Int?
+  weight Int?
+  ownAparts Boolean?
+  ownCar Boolean?
+  badHabits Boolean?
+
+  smoking Boolean?
+  alcohol Boolean?
+  drugs Boolean?
+  gambling Boolean?
+
+  moneyCondition Boolean?
+  orientation Boolean?
+
+  education String?
+  typeOfAppearance String?
+  religion String?
+  zodiac String?
+  eastYear String?
+  languages String[]
+
+  verification String?
+
+  friends         User[] @relation("friends")
+  friendsRelation User[] @relation("friends")
+
+  guests         User[] @relation("guests")
+  guestsRelation User[] @relation("guests")
+
+  likesFrom         User[] @relation("likesFrom")
+  likesFromRelation User[] @relation("likesFrom")
+
+  sentMessages     Message[] @relation("sentMessages")
+  receivedMessages Message[] @relation("receivedMessages")
+
+  user1Chats Chat[] @relation("user1Chats")
+  user2Chats Chat[] @relation("user2Chats")
+
+  gifts Gift[]
+  userNotifications Notification[] @relation("userNotifications")
+  user2Notifications Notification[] @relation("user2Notifications")
+
+  stickers Sticker[]
+
+  payments Payment[]
+  supportMessages SupportMessage[]
+
+  @@map("users")
+}
+
+model Gift {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  img String
+  cost Int
+
+  name String
+
+  users User[]
+
+  @@map("gifts")
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type String
+  user User @relation(name: "userNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  user2 User @relation(name: "user2Notifications", fields: [user2Id], references: [id], onDelete: Cascade)
+  userId Int
+  user2Id Int
+
+  seen Boolean @default(false)
+
+  @@map("notifications")
+}
+
+model City {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String @unique
+  users User[]
+
+  @@map("cities")
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender     User   @relation(name: "sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User   @relation(name: "receivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  senderId Int
+  receiverId Int
+
+  seen Boolean @default(false)
+
+  time String @default("")
+
+  chat Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+
+  sticker Sticker? @relation(fields: [stickerId], references: [id])
+  stickerId Int?
+
+  voiceMessageName String?
+
+  text String
+
+  complaints Complaint[]
+
+  @@map("messages")
+
+}
+
+model Sticker {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+  img String
+  cost Int @default(200)
+
+  messages Message[]
+  users User[]
+}
+
+model Chat {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user1 User   @relation(name: "user1Chats", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2 User   @relation(name: "user2Chats", fields: [user2Id], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  user1Id Int
+  user2Id Int
+
+  @@map("chats")
+}
+
+model Payment {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  amount Int
+  date String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}
+
+model Complaint {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id])
+  messageId Int
+
+  senderId Int
+
+  reason String
+}
+
+model SupportMessage {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender     User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId Int
+
+  fromSupport Boolean
+
+  text String
+
+}

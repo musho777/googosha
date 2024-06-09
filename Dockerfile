@@ -21,6 +21,21 @@ FROM node:18
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
+# Use an official Node.js runtime as a parent image
 
-EXPOSE 8000
-CMD ["npm", "run", "start:prod"]
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Install dependencies
+COPY package*.json ./
+
+RUN npm install
+
+# Bundle app source
+COPY . .
+
+# Expose port
+
+# Define the command to run the app
+EXPOSE 3000
+CMD ["node", "app.js","npm", "run", "start:prod"]

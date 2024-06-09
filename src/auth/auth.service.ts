@@ -5,7 +5,7 @@ import * as argon from 'argon2'
 import * as nodemailer from 'nodemailer'
 var Mailgen = require('mailgen');
 import { JwtService } from '@nestjs/jwt';
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/binary";
 import { ForbiddenException } from "@nestjs/common/exceptions";
 import { ConfigService } from "@nestjs/config";
 
@@ -14,7 +14,6 @@ export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) { }
 
     async signup(dto: SignupDto) {
-        console.log("---+")
         const hash = await argon.hash(dto.password)
         try {
             const user = await this.prisma.user.create({
@@ -41,7 +40,7 @@ export class AuthService {
                     hash,
                     lat: dto.lat,
                     lon: dto.lon,
-                    age: parseInt(dto.age)
+                    age: parseInt(dto.age),
                 }
             })
             console.log("------++++++")
@@ -181,7 +180,7 @@ export class AuthService {
         return this.signToken(user.id, user.email)
     }
 
-    async uploadAvatar(userId, filename) {
+    async uploadAvatar(userId: any, filename: any) {
         const user = await this.prisma.user.update({
             where: {
                 id: userId
@@ -196,7 +195,6 @@ export class AuthService {
     }
 
     async signin(dto: SigninDto, ip: string) {
-        console.error(dto, 'askfdjfjsdkjf')
         const user = await this.prisma.user.findUnique({
             where: {
                 email: dto.email

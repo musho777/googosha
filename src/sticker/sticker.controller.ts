@@ -4,7 +4,9 @@ import { JwtGuard } from 'src/auth/guard';
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { GetUser } from 'src/auth/decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateSticker } from 'src/prisma/dto/CreateSticker.dto';
+import { Buy } from 'src/prisma/dto/buy.dto';
 
 @ApiTags('Sticker')
 @Controller('sticker')
@@ -18,9 +20,13 @@ export class StickerController {
   }
 
   @Post()
-  createSticker(@Body() dto: { name: string, cost: number }) {
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
+  createSticker(@Body() dto: CreateSticker) {
     return this.stickerService.createSticker(dto)
   }
+
   @Post('uploadStickerImage/:id')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
@@ -50,7 +56,13 @@ export class StickerController {
   }
 
   @Post('buy')
-  buySticker(@GetUser('id') userId: number, @Body() dto: { id: number }) {
+  @ApiResponse({
+    status: 401, description: 'Not enough money'
+  })
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
+  buySticker(@GetUser('id') userId: number, @Body() dto: Buy) {
     return this.stickerService.buySticker(dto.id, userId)
   }
 }

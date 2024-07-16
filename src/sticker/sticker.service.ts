@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class StickerService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async getStickers() {
         return await this.prisma.sticker.findMany({})
@@ -54,7 +54,7 @@ export class StickerService {
                 img: filename,
             }
         })
-    
+
         return sticker
     }
 

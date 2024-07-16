@@ -6,60 +6,156 @@ import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { Param } from "@nestjs/common/decorators";
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { GiveVipstatus } from './dto/GiveVipstatus.dto';
+import { Ban } from './dto/Ban.dto';
+import { ChangeVipCost } from './dto/changeVipCost.dto';
+import { VipCost } from './dto/vipCost.dto';
+import { DeleteVipStatus } from './dto/deleteVipStatus.dto';
+import { BuyVipStatus } from './dto/buyVipStatus.dto';
 
 @ApiTags('User')
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UserController {
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService) { }
 
-    }
+
+
+    @ApiResponse({
+        status: 401, example: {
+            "status": false,
+            "message": "Unauthenticated"
+        }
+    })
+    @ApiResponse({
+        status: 200, example: {
+            "message": "Successful operation",
+            "data": '{user}'
+        }
+    })
 
     @Get('me')
     getMe(@GetUser() user: User) {
         return user
     }
 
+
+
+
+
+
     @Get('gifts')
     getGifts(@GetUser('id') id: number) {
         return this.userService.getGifts(id)
     }
+
+
+
+
+
+
+
+
 
     @Get('cities')
     getCities() {
         return this.userService.getCities()
     }
 
+
+
+
+
+
+
     @Post('giveVipStatus')
-    giveVipStatus(@Body() dto: { daysCount: number, email: string }) {
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    giveVipStatus(@Body() dto: GiveVipstatus) {
         return this.userService.giveVipStatus(dto.email, dto.daysCount)
     }
 
+
+
+
+
+
     @Post('ban')
-    banUser(@Body() dto: { userId: number, daysCount: number }) {
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    banUser(@Body() dto: Ban) {
         return this.userService.banUser(dto.userId, dto.daysCount)
     }
 
+
+
+
+
+
+
     @Post('changeVipCost')
-    changeVipCost(@Body() dto: { type: string, amount: number }) {
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    changeVipCost(@Body() dto: ChangeVipCost) {
         return this.userService.changeVipCost(dto.type, dto.amount)
     }
 
+
+
+
+
     @Get('vipCost')
-    getVipCost(@Body() dto: { type: string, amount: number }) {
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    getVipCost(@Body() dto: VipCost) {
         return this.userService.getVipCost(dto.type, dto.amount)
     }
 
+
+
+
+
+
+
     @Post('deleteVipStatus')
-    deleteVipStatus(@Body() dto: { userId: number }) {
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    deleteVipStatus(@Body() dto: DeleteVipStatus) {
         return this.userService.deleteVipStatus(dto.userId)
     }
 
+
+
+
+
+
+
+
+
     @Post('buyVipStatus')
-    buyVipStatus(@Body() dto: { type: string }, @GetUser('id') id: number) {
+    @ApiResponse({
+        status: 401, example: {
+            "status": false,
+            "message": "Not enough coins"
+        }
+    })
+    @ApiResponse({
+        status: 200, description: 'Success response'
+    })
+    buyVipStatus(@Body() dto: BuyVipStatus, @GetUser('id') id: number) {
         return this.userService.buyVipStatusWithCoins(id, dto.type)
     }
+
+
+
+
+
 
     @Delete(':id')
     deleteUser(@Param('id', ParseIntPipe) userId: number) {
@@ -82,7 +178,6 @@ export class UserController {
         })
     }))
     uploadFile(@UploadedFile() file, @GetUser('id') id: number) {
-        console.log(file)
         return this.userService.uploadAvatar(id, file.filename)
     }
 

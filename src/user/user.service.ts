@@ -11,7 +11,7 @@ const vipCost = {
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async getGifts(userId: number) {
         const user = await this.prisma.user.findUnique({
@@ -32,10 +32,10 @@ export class UserService {
             },
             data: {
                 avatar: filename,
-                
+
             }
         })
-    
+
         return user
     }
 
@@ -48,10 +48,10 @@ export class UserService {
                 gallery: {
                     push: filename
                 },
-                
+
             }
         })
-    
+
         return filename
     }
 
@@ -70,7 +70,7 @@ export class UserService {
             case '1':
                 if (user.balance < vipCost['1']) {
                     return new ForbiddenException('Not enough coins')
-                } 
+                }
 
                 else return await this.prisma.user.update({
                     where: {
@@ -78,15 +78,15 @@ export class UserService {
                     },
                     data: {
                         vip: true,
-                        vipExpiresAt: (Date.now() + 86400000*31).toString(),
+                        vipExpiresAt: (Date.now() + 86400000 * 31).toString(),
                         balance: user.balance - vipCost['1']
                     }
-            })
+                })
 
             case '3':
                 if (user.balance < vipCost['3']) {
                     return new ForbiddenException('Not enough coins')
-                } 
+                }
 
                 else return await this.prisma.user.update({
                     where: {
@@ -94,15 +94,15 @@ export class UserService {
                     },
                     data: {
                         vip: true,
-                        vipExpiresAt: (Date.now() + 86400000*93).toString(),
+                        vipExpiresAt: (Date.now() + 86400000 * 93).toString(),
                         balance: user.balance - vipCost['3']
                     }
-            })
+                })
 
             case '12':
                 if (user.balance < vipCost['12']) {
                     return new ForbiddenException('Not enough coins')
-                } 
+                }
 
                 else return await this.prisma.user.update({
                     where: {
@@ -110,15 +110,15 @@ export class UserService {
                     },
                     data: {
                         vip: true,
-                        vipExpiresAt: (Date.now() + 86400000*365).toString(),
+                        vipExpiresAt: (Date.now() + 86400000 * 365).toString(),
                         balance: user.balance - vipCost['12']
                     }
-            })
+                })
         }
     }
 
     async giveVipStatus(userEmail: string, daysCount: number) {
-        const days = Date.now() + 86400000*daysCount
+        const days = Date.now() + 86400000 * daysCount
 
         return await this.prisma.user.update({
             where: {
@@ -191,7 +191,7 @@ export class UserService {
     }
 
     async banUser(userId: number, daysCount: number) {
-        const days = Date.now() + 86400000*daysCount
+        const days = Date.now() + 86400000 * daysCount
 
         return await this.prisma.user.update({
             where: {
@@ -206,7 +206,6 @@ export class UserService {
 
     async changeVipCost(type: string, newAmout: number) {
         vipCost[type] = newAmout
-        console.log(vipCost)
     }
 
     async getVipCost(type: string, newAmout: number) {

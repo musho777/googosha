@@ -4,7 +4,9 @@ import { SupportMessagesService } from './support-messages.service';
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { GetUser } from 'src/auth/decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from './dto/User.dto';
+import { Support } from './dto/support.dto';
 
 @ApiTags('Support-messafes')
 @UseGuards(JwtGuard)
@@ -17,13 +19,19 @@ export class SupportMessagesController {
     return this.supportMessagesService.getUsersMessagesByChats()
   }
 
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
   @Post('user')
-  createUserMessage(@GetUser('id') userId: number, @Body() dto: { text: string }) {
+  createUserMessage(@GetUser('id') userId: number, @Body() dto: User) {
     return this.supportMessagesService.createUserMessage(userId, dto.text)
   }
 
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
   @Post('support')
-  createSupportMessage(@Body() dto: { text: string, userToId: number }) {
+  createSupportMessage(@Body() dto: Support) {
     return this.supportMessagesService.createSupportMessage(dto.userToId, dto.text)
   }
 

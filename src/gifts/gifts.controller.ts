@@ -4,7 +4,9 @@ import { GiftsService } from './gifts.service';
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { GetUser } from 'src/auth/decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Gifts } from './dto/gifts.dto';
+import { GiftSend } from './dto/giftSend.dto';
 
 @ApiTags('Gifts')
 @UseGuards(JwtGuard)
@@ -18,7 +20,10 @@ export class GiftsController {
   }
 
   @Post()
-  createGift(@Body() dto: { cost: number, name: string }) {
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
+  createGift(@Body() dto: Gifts) {
     return this.giftsService.createGift(dto)
   }
   @Post('uploadGiftImage/:id')
@@ -38,8 +43,17 @@ export class GiftsController {
     return this.giftsService.uploadGiftImage(giftId, file.filename)
   }
 
+  @ApiResponse({
+    status: 401, description: 'User already has this gift'
+  })
+  @ApiResponse({
+    status: 400, description: 'Not enough money'
+  })
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
   @Post('send')
-  sendGift(@Body() dto: { giftId: number, userToId: number }, @GetUser('id') userId: number) {
+  sendGift(@Body() dto: GiftSend, @GetUser('id') userId: number) {
     return this.giftsService.sendGift(dto.giftId, userId, dto.userToId)
   }
 }

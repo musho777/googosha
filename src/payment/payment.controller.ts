@@ -2,7 +2,9 @@ import { Controller, Post, UsePipes, ValidationPipe, Body, Get } from '@nestjs/c
 import { JwtGuard } from 'src/auth/guard';
 import { PaymentDto, PaymentStatusDto } from './dto';
 import { PaymentService } from './payment.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CoinCost } from './dto/coinCost.dto';
+import { GiveCoins } from './dto/giveCoins.dto';
 
 @ApiTags('Payment')
 @Controller('payment')
@@ -17,6 +19,9 @@ export class PaymentController {
 
   @UsePipes(new ValidationPipe())
   @Post()
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
   createPayment(@Body() dto: PaymentDto) {
     return this.paymentService.payment(dto)
   }
@@ -37,12 +42,18 @@ export class PaymentController {
   }
 
   @Post('coinCost')
-  changeCoinCost(@Body() dto: { newCost: number }) {
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
+  changeCoinCost(@Body() dto: CoinCost) {
     return this.paymentService.changeCoinCost(dto.newCost)
   }
 
+  @ApiResponse({
+    status: 200, description: 'success'
+  })
   @Post('giveCoins')
-  giveCoins(@Body() dto: { amount: number, email: string }) {
+  giveCoins(@Body() dto: GiveCoins) {
     return this.paymentService.giveCoins(dto.email, dto.amount)
   }
 }

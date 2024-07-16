@@ -2,11 +2,13 @@ import { Controller, Get, Post, UseGuards, ParseIntPipe, Param, Body } from '@ne
 import { MessagesService } from './messages.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Messages')
 @UseGuards(JwtGuard)
 @Controller('messages')
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly messagesService: MessagesService) { }
 
   @Get('chat')
   getChats(@GetUser('id', ParseIntPipe) userId: number) {

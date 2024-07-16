@@ -2,17 +2,19 @@ import { Controller, Post, UsePipes, ValidationPipe, Body, Get } from '@nestjs/c
 import { JwtGuard } from 'src/auth/guard';
 import { PaymentDto, PaymentStatusDto } from './dto';
 import { PaymentService } from './payment.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(private readonly paymentService: PaymentService) { }
 
   @Get()
   getPayments() {
     return this.paymentService.getPayments()
   }
 
-  
+
   @UsePipes(new ValidationPipe())
   @Post()
   createPayment(@Body() dto: PaymentDto) {

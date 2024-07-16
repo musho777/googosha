@@ -2,27 +2,29 @@ import { Controller, Get, UseGuards, ParseIntPipe, Query, Post, Body, Param } fr
 import { MatchingService } from './matching.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Matching')
 @UseGuards(JwtGuard)
 @Controller('matching')
 export class MatchingController {
-  constructor(private readonly matchingService: MatchingService) {}
+  constructor(private readonly matchingService: MatchingService) { }
 
   @Get('likesFrom')
   getLikesFrom(@GetUser('id', ParseIntPipe) userId: number) {
     return this.matchingService.getLikesFrom(userId)
   }
-  
+
   @Get('likesTo')
   getLikesTo(@GetUser('id', ParseIntPipe) userId: number) {
     return this.matchingService.getLikesTo(userId)
   }
-  
+
   @Get('friends')
   getFriends(@GetUser('id', ParseIntPipe) userId: number) {
     return this.matchingService.getFriends(userId)
   }
-  
+
   @Get('guests')
   getGuests(@GetUser('id', ParseIntPipe) userId: number) {
     return this.matchingService.getGuests(userId)
@@ -32,7 +34,7 @@ export class MatchingController {
   getCities() {
     return this.matchingService.getCities()
   }
-  
+
   @Get(':id')
   getUser(@GetUser('id', ParseIntPipe) userId: number, @Param('id', ParseIntPipe) userToFindId: number) {
     return this.matchingService.getUser(userId, userToFindId)

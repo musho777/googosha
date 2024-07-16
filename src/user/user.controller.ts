@@ -6,14 +6,16 @@ import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { Param } from "@nestjs/common/decorators";
 import { UserService } from './user.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UserController {
     constructor(private userService: UserService) {
-        
+
     }
-    
+
     @Get('me')
     getMe(@GetUser() user: User) {
         return user
@@ -65,7 +67,7 @@ export class UserController {
         return this.userService.deleteUser(userId)
     }
 
-    
+
     @Post('uploadAvatar')
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
@@ -73,7 +75,7 @@ export class UserController {
             filename: (req, file, cb) => {
                 const name = file.originalname.split('.')[0]
                 const extension = file.originalname.split('.')[1]
-                const newFileName = name.split(" ").join('_')+'_'+Date.now()+'.'+extension
+                const newFileName = name.split(" ").join('_') + '_' + Date.now() + '.' + extension
 
                 cb(null, newFileName)
             }
@@ -91,7 +93,7 @@ export class UserController {
             filename: (req, file, cb) => {
                 const name = file.originalname.split('.')[0]
                 const extension = file.originalname.split('.')[1]
-                const newFileName = name.split(" ").join('_')+'_'+Date.now()+'.'+extension
+                const newFileName = name.split(" ").join('_') + '_' + Date.now() + '.' + extension
 
                 cb(null, newFileName)
             }

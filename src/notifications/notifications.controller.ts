@@ -4,11 +4,13 @@ import { NotificationsService } from './notifications.service';
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { GetUser } from 'src/auth/decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Notifications')
 @UseGuards(JwtGuard)
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(private readonly notificationsService: NotificationsService) { }
 
   @Get()
   getNotifications(@GetUser('id') userId: number) {

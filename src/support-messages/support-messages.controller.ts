@@ -4,11 +4,13 @@ import { SupportMessagesService } from './support-messages.service';
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { diskStorage } from 'multer'
 import { GetUser } from 'src/auth/decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Support-messafes')
 @UseGuards(JwtGuard)
 @Controller('support-messages')
 export class SupportMessagesController {
-  constructor(private readonly supportMessagesService: SupportMessagesService) {}
+  constructor(private readonly supportMessagesService: SupportMessagesService) { }
 
   @Get('chats')
   getUsersMessagesByChats() {

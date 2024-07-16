@@ -13,7 +13,9 @@ import { ConfigService } from "@nestjs/config";
 export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) { }
 
+
     async signup(dto: SignupDto) {
+
         const hash = await argon.hash(dto.password)
         try {
             const user = await this.prisma.user.create({
@@ -59,7 +61,7 @@ export class AuthService {
                 email
             }
         })
-
+        console.log(user)
         if (!user) throw new ForbiddenException("Email doesn't exist")
 
         const code = Math.floor(Math.random() * (9999 - 1000) + 1000).toString()
